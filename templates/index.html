@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillBridge GH | Python Flask Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen font-sans">
+
+    <!-- Header Navigation -->
+    <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-lg bg-emerald-600 flex items-center justify-center font-bold text-yellow-400 text-xl shadow">★</div>
+                <div>
+                    <span class="text-xl font-bold tracking-tight">SkillBridge <span class="text-yellow-400">GH</span></span>
+                    <span class="hidden sm:inline-block text-xs bg-emerald-900/60 text-emerald-300 px-2 py-0.5 rounded ml-2 border border-emerald-700">Python Flask Portal</span>
+                </div>
+            </div>
+
+            <nav class="flex space-x-2 text-sm font-medium">
+                <button id="nav-browse" onclick="switchTab('browse')" class="px-3 py-2 rounded-md text-white bg-slate-800 transition"><i class="fa-solid fa-briefcase mr-2"></i>Micro-Tasks</button>
+                <button id="nav-stats" onclick="switchTab('stats')" class="px-3 py-2 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition"><i class="fa-solid fa-chart-line mr-2"></i>Ghana Stats</button>
+                <button id="nav-portfolio" onclick="switchTab('portfolio')" class="px-3 py-2 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition"><i class="fa-solid fa-id-card mr-2"></i>My Passport</button>
+            </nav>
+
+            <button onclick="openPostModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold px-3 py-2 rounded-lg shadow transition flex items-center">
+                <i class="fa-solid fa-plus mr-1"></i> Post Task
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- TAB 1: BROWSE -->
+        <section id="tab-browse" class="space-y-6">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-4 justify-between items-center">
+                <div class="relative w-full md:w-1/2">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="search-input" onkeyup="filterOpportunities()" placeholder="Search by skill, company, or city..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-600 text-sm">
+                </div>
+                <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                    <select id="category-filter" onchange="filterOpportunities()" class="px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600">
+                        <option value="ALL">All Sectors</option>
+                        <option value="Tech">Tech & Web</option>
+                        <option value="Design">Graphic Design</option>
+                        <option value="Marketing">Digital Marketing</option>
+                        <option value="Admin">Data & Admin</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="opportunity-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Dynamically rendered via JS -->
+            </div>
+        </section>
+
+        <!-- TAB 2: STATS -->
+        <section id="tab-stats" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <h2 class="text-2xl font-bold text-slate-900 mb-2">Ghana Youth Employment Realities & Platform Impact</h2>
+                <p class="text-sm text-slate-600">Data synthesized from official <strong>Ghana Statistical Service (GSS)</strong> census reports.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm text-center">
+                    <div class="text-3xl font-extrabold text-red-600 mb-1">~60%</div>
+                    <div class="text-xs font-bold text-slate-700 uppercase tracking-wide">Graduate Entry Gap</div>
+                    <p class="text-xs text-slate-500 mt-2">Over 300,000 graduates enter the labor market annually, facing experience requirements.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm text-center">
+                    <div class="text-3xl font-extrabold text-emerald-600 mb-1">1.9 Million</div>
+                    <div class="text-xs font-bold text-slate-700 uppercase tracking-wide">Youth in NEET Category</div>
+                    <p class="text-xs text-slate-500 mt-2">Youth (15-24) Not in Education, Employment, or Training.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm text-center">
+                    <div class="text-3xl font-extrabold text-yellow-600 mb-1">85%+</div>
+                    <div class="text-xs font-bold text-slate-700 uppercase tracking-wide">Private Sector SMEs</div>
+                    <p class="text-xs text-slate-500 mt-2">SMEs require micro-project digital help without full-time payroll overhead.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: PORTFOLIO -->
+        <section id="tab-portfolio" class="hidden space-y-6">
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">Ghana Youth Career Passport</h2>
+                    <p class="text-sm text-slate-600">Verified micro-internship completions.</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="md:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                    <h3 class="font-bold text-slate-800 border-b pb-2">Verified Badges</h3>
+                    <div id="badge-list" class="space-y-3">
+                        {% for b in badges %}
+                        <div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                            <div class="w-8 h-8 rounded-full bg-yellow-100 text-slate-900 flex items-center justify-center font-bold text-xs"><i class="fa-solid {{ b.icon }}"></i></div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-900">{{ b.name }}</h4>
+                                <p class="text-[11px] text-slate-500">{{ b.issuer }} • {{ b.date }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="md:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                    <h3 class="font-bold text-slate-800 border-b pb-2">Submitted Applications</h3>
+                    <div id="applied-list" class="space-y-3">
+                        {% for a in applications %}
+                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs">
+                            <div>
+                                <h4 class="font-bold text-slate-900">{{ a.projectTitle }}</h4>
+                                <p class="text-slate-500">{{ a.company }} • Applied {{ a.dateApplied }}</p>
+                            </div>
+                            <span class="px-2 py-0.5 rounded-full font-semibold bg-blue-100 text-blue-800 text-[10px]">{{ a.status }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modals -->
+    <div id="apply-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-2xl p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-lg text-slate-900" id="modal-project-title">Apply for Project</h3>
+                <button onclick="closeModal('apply-modal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <form id="apply-form" onsubmit="submitApplication(event)" class="space-y-4">
+                <input type="hidden" id="modal-project-title-input">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Full Name</label>
+                    <input type="text" id="applicant-name" required placeholder="Kwame Mensah" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-600 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Email Address</label>
+                    <input type="email" id="applicant-email" required placeholder="kwame@example.com" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-600 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Pitch</label>
+                    <textarea id="applicant-pitch" required rows="3" placeholder="Why are you ready for this task?" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-600 outline-none"></textarea>
+                </div>
+                <div class="flex justify-end space-x-3 pt-2 border-t">
+                    <button type="button" onclick="closeModal('apply-modal')" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-semibold">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition">Submit Pitch</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="post-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-2xl p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-lg text-slate-900">Post Micro-Task</h3>
+                <button onclick="closeModal('post-modal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <form id="post-form" onsubmit="submitNewOpportunity(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Company Name</label>
+                    <input type="text" id="post-company" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Task Title</label>
+                    <input type="text" id="post-title" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Category</label>
+                        <select id="post-category" class="w-full px-3 py-2 border rounded-lg text-sm outline-none">
+                            <option value="Tech">Tech & Web</option>
+                            <option value="Design">Graphic Design</option>
+                            <option value="Marketing">Digital Marketing</option>
+                            <option value="Admin">Admin & Data</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Duration</label>
+                        <input type="text" id="post-duration" required placeholder="2 Weeks" class="w-full px-3 py-2 border rounded-lg text-sm outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Stipend</label>
+                    <input type="text" id="post-stipend" required placeholder="GH₵ 450 + Badge" class="w-full px-3 py-2 border rounded-lg text-sm outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Description</label>
+                    <textarea id="post-description" required rows="3" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></textarea>
+                </div>
+                <div class="flex justify-end space-x-3 pt-2 border-t">
+                    <button type="button" onclick="closeModal('post-modal')" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-semibold">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold">Publish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-xl hidden z-50 flex items-center space-x-3 border border-slate-700">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+        <span id="toast-msg" class="text-sm font-medium">Notification</span>
+    </div>
+
+    <script>
+        let opportunities = {{ opportunities | tojson }};
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderOpportunities();
+        });
+
+        function renderOpportunities() {
+            const grid = document.getElementById("opportunity-grid");
+            const searchVal = document.getElementById("search-input").value.toLowerCase();
+            const catVal = document.getElementById("category-filter").value;
+
+            const filtered = opportunities.filter(item => {
+                const matchesSearch = item.title.toLowerCase().includes(searchVal) ||
+                                      item.company.toLowerCase().includes(searchVal) ||
+                                      item.location.toLowerCase().includes(searchVal);
+                const matchesCat = catVal === "ALL" || item.category === catVal;
+                return matchesSearch && matchesCat;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full bg-white p-8 rounded-xl text-center border border-slate-200"><p class="text-slate-600 text-sm">No matching tasks found.</p></div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(item => `
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition p-5 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-start">
+                            <span class="px-2.5 py-1 text-xs font-semibold rounded-md bg-emerald-100 text-emerald-800">${item.category}</span>
+                            <span class="text-xs text-slate-500"><i class="fa-regular fa-clock mr-1"></i>${item.duration}</span>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-base">${item.title}</h3>
+                        <p class="text-xs text-slate-500 font-semibold">${item.company} • ${item.location}</p>
+                        <p class="text-xs text-slate-600">${item.description}</p>
+                    </div>
+                    <div class="pt-4 mt-4 border-t border-slate-100 flex justify-between items-center">
+                        <span class="text-xs font-semibold text-slate-700">${item.stipend}</span>
+                        <button onclick="openApplyModal('${item.title.replace(/'/g, "\\'")}')" class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700 transition">View & Apply</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterOpportunities() { renderOpportunities(); }
+
+        function switchTab(tab) {
+            document.getElementById("tab-browse").classList.add("hidden");
+            document.getElementById("tab-stats").classList.add("hidden");
+            document.getElementById("tab-portfolio").classList.add("hidden");
+
+            document.getElementById("nav-browse").className = "px-3 py-2 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition";
+            document.getElementById("nav-stats").className = "px-3 py-2 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition";
+            document.getElementById("nav-portfolio").className = "px-3 py-2 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition";
+
+            document.getElementById(`tab-${tab}`).classList.remove("hidden");
+            document.getElementById(`nav-${tab}`).className = "px-3 py-2 rounded-md text-white bg-slate-800 transition";
+        }
+
+        function openApplyModal(title) {
+            document.getElementById("modal-project-title").innerText = `Apply: ${title}`;
+            document.getElementById("modal-project-title-input").value = title;
+            document.getElementById("apply-modal").classList.remove("hidden");
+        }
+
+        function openPostModal() { document.getElementById("post-modal").classList.remove("hidden"); }
+        function closeModal(id) { document.getElementById(id).classList.add("hidden"); }
+
+        function submitApplication(e) {
+            e.preventDefault();
+            const title = document.getElementById("modal-project-title-input").value;
+            fetch('/api/apply', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title: title })
+            }).then(res => res.json()).then(data => {
+                if(data.success) {
+                    closeModal('apply-modal');
+                    showToast("Application submitted successfully!");
+                    setTimeout(() => window.location.reload(), 1000);
+                }
+            });
+        }
+
+        function submitNewOpportunity(e) {
+            e.preventDefault();
+            const payload = {
+                company: document.getElementById("post-company").value,
+                title: document.getElementById("post-title").value,
+                category: document.getElementById("post-category").value,
+                duration: document.getElementById("post-duration").value,
+                stipend: document.getElementById("post-stipend").value,
+                description: document.getElementById("post-description").value
+            };
+            fetch('/api/post', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(res => res.json()).then(data => {
+                if(data.success) {
+                    closeModal('post-modal');
+                    showToast("Task posted live!");
+                    setTimeout(() => window.location.reload(), 1000);
+                }
+            });
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById("toast");
+            document.getElementById("toast-msg").innerText = msg;
+            toast.classList.remove("hidden");
+            setTimeout(() => toast.classList.add("hidden"), 3000);
+        }
+    </script>
+</body>
+</html>
